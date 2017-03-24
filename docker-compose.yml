@@ -1,0 +1,10 @@
+version: "3"
+services:
+  web:
+    build: .
+    env_file: .env
+    command: python rtmbot.py
+    volumes:
+      - .:/src
+    expose:
+      - "8000"
