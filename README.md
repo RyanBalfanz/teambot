@@ -1,5 +1,8 @@
 teambot
 =======
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 A bot to create per-channel notification lists in Slack.
 
 At Square, we have a lot of teams that make heavy use of slack. Each team owns a few different services, so people might hang around in the team's channel to get updates or ask questions. However, this makes it difficult to use @channel or @here to contact just your team.
