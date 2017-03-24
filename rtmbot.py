@@ -14,6 +14,8 @@ import os
 import sys
 import time
 import logging
+import importlib
+import functools
 from argparse import ArgumentParser
 
 from slackclient import SlackClient
@@ -145,14 +147,42 @@ def main_loop():
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument(
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         '-c',
         '--config',
         help='Full path to config file.',
         metavar='path'
     )
+    group.add_argument(
+        '-s',
+        '--settings',
+        help='Python path to settings module.',
+        metavar='module'
+    )
+
+    # Allows the bot to be run with zero arguments and use a Python module
+    # instead of a YAML file.
+    if os.getenv('TEAMBOT_SETTINGS_MODULE') is not None:
+        parser.set_defaults(settings=os.getenv('TEAMBOT_SETTINGS_MODULE'))
+    else:
+        parser.set_defaults(config='rtmbot.conf')
+
     return parser.parse_args()
 
+def get_config(args):
+    if args.config:
+        config = yaml.load(file(args.config, 'r'))
+    elif args.settings:
+        s = importlib.import_module(args.settings)
+        get_s = functools.partial(getattr, s)
+        config = {
+            'DAEMON': get_s('DAEMON', False),
+            'DEBUG': get_s('DEBUG', False),
+            'SLACK_TOKEN': get_s('SLACK_TOKEN', None),
+        }
+    return config
 
 if __name__ == "__main__":
     args = parse_args()
@@ -162,7 +192,7 @@ if __name__ == "__main__":
                                 directory
                                 ))
 
-    config = yaml.load(file(args.config or 'rtmbot.conf', 'r'))
+    config = get_config(args)
     debug = config["DEBUG"]
     bot = RtmBot(config["SLACK_TOKEN"])
     site_plugins = []
@@ -175,4 +205,3 @@ if __name__ == "__main__":
             with daemon.DaemonContext():
                 main_loop()
     main_loop()
-

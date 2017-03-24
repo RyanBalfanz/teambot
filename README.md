@@ -21,7 +21,9 @@ $ . env/bin/activate
 $ pip install -r requirements.txt
 ```
 2. Obtain a token for your slack bot (see the [Slack documentation](https://api.slack.com/getting-started)). I recommend naming it "team".
-3. Create a configuration file. One simple way is to `cp rtmbot.conf.example rtmbot.conf`, then edit rtmbot.conf and replace `<your-token-here>` with the bot's token from your Slack dashboard.
+3. Configure your bot using either a YAML file or a Python module.
+  * Create a configuration file. One simple way is to `cp rtmbot.conf.example rtmbot.conf`, then edit rtmbot.conf and replace `<your-token-here>` with the bot's token from your Slack dashboard.
+  * Create a settings module and set `TEAMBOT_SETTINGS_MODULE` in your environment to the Python path of the module. Once simple way is to `cp settings.py.example settings.py`, then edit settings.py as needed.
 4. That's it. Start the bot with `python rtmbot.py`.
 
 Setting up a team
