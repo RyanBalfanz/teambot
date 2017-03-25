@@ -146,7 +146,27 @@ def main_loop():
         logging.exception('OOPS')
 
 
-def parse_args():
+def parse_args(args=None, namespace=None):
+    """
+    >>> from test.test_support import EnvironmentVarGuard
+    >>> env = EnvironmentVarGuard()
+    >>> # Without TEAMBOT_SETTINGS_MODULE
+    >>> env.unset('TEAMBOT_SETTINGS_MODULE')
+    >>> parse_args([])
+    Namespace(config='rtmbot.conf', diffsettings=False, settings=None)
+    >>> parse_args(["--diffsettings"])
+    Namespace(config='rtmbot.conf', diffsettings=True, settings=None)
+    >>> parse_args(["--config", 'teambotconfig.conf'])
+    Namespace(config='teambotconfig.conf', diffsettings=False, settings=None)
+    >>> # With TEAMBOT_SETTINGS_MODULE=settings
+    >>> env.set('TEAMBOT_SETTINGS_MODULE', 'settings')
+    >>> parse_args([])
+    Namespace(config=None, diffsettings=False, settings='settings')
+    >>> parse_args(["--diffsettings"])
+    Namespace(config=None, diffsettings=True, settings='settings')
+    >>> parse_args(["--settings", 'teambotconfig'])
+    Namespace(config=None, diffsettings=False, settings='teambotconfig')
+    """
     parser = ArgumentParser()
 
     group = parser.add_mutually_exclusive_group()
@@ -176,7 +196,7 @@ def parse_args():
     else:
         parser.set_defaults(config='rtmbot.conf')
 
-    return parser.parse_args()
+    return parser.parse_args(args, namespace)
 
 def get_config(args):
     if args.config:
@@ -192,7 +212,7 @@ def get_config(args):
     return config
 
 if __name__ == "__main__":
-    args = parse_args()
+    args = parse_args(sys.argv[1:])
     directory = os.path.dirname(sys.argv[0])
     if not directory.startswith('/'):
         directory = os.path.abspath("{}/{}".format(os.getcwd(),
