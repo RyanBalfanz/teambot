@@ -16,6 +16,7 @@ import time
 import logging
 import importlib
 import functools
+import pprint
 from argparse import ArgumentParser
 
 from slackclient import SlackClient
@@ -162,6 +163,12 @@ def parse_args():
         metavar='module'
     )
 
+    parser.add_argument(
+        '--diffsettings',
+        help='Displays the current settings and exits.',
+        action='store_true'
+    )
+
     # Allows the bot to be run with zero arguments and use a Python module
     # instead of a YAML file.
     if os.getenv('TEAMBOT_SETTINGS_MODULE') is not None:
@@ -193,6 +200,11 @@ if __name__ == "__main__":
                                 ))
 
     config = get_config(args)
+
+    if args.diffsettings:
+        pprint.pprint(config)
+        sys.exit()
+
     debug = config["DEBUG"]
     bot = RtmBot(config["SLACK_TOKEN"])
     site_plugins = []
