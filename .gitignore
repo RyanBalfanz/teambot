@@ -5,3 +5,4 @@ env
 rtmbot.conf
 settings.py
 !.gitignore
+!.travis.yml
