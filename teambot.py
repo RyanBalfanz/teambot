@@ -52,6 +52,12 @@ def handle_direct_message(dm_channel_id, data):
                 )
             )
         )
+    elif text == 'dump':
+        from utils import DirectorySerializer, JSONRenderer
+        serializer = DirectorySerializer(directory)
+        jsonDump = JSONRenderer(indent=2).render(serializer.data)
+        message = """```\n{jsonDump}\n```""".format(jsonDump=jsonDump)
+        return send(dm_channel_id, message)
 
     # Accept messages of the form "command #channel [@user...]"
     match = re.match('^(?P<cmd>\w+)\s+<#(?P<channel>C\w+)(\|.+?)?>(?P<people>(\s+<@U\w+(\|.+?)?>)*)$', text)
@@ -202,4 +208,5 @@ leave #channel                          - remove yourself from the team for #cha
 drop #channel                           - drop the team record for #channel
 list-all                                - list all registered teams
 stats                                   - get slackbot team statistics
+dump                                    - dump team info
 help                                    - this help```'''
