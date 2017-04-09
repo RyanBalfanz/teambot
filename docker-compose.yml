@@ -7,7 +7,5 @@ services:
     volumes:
       - .:/src
       - db-data:/var/run/data
-    expose:
-      - "8000"
 volumes:
   db-data:
